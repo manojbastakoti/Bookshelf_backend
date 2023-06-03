@@ -66,6 +66,8 @@ const loginUser=async(req,res)=>{
     const token =createToken({data:result});
     user.token=token;
     await user.save();
+    // console.log(user)
+    res.cookie("auth",token)
 
     res.json({
         success:true,
