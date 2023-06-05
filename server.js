@@ -7,7 +7,7 @@ const {getUsers,addUser,loginUser}=require("./Handler/userHandler");
 const { authenticateToken } = require("./middleware/authenticate");
 
 
-app.use(cors({origin:"http://localhost:5173"}))
+app.use(cors({credentials:true ,origin:"http://localhost:5173"}))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(cookieParser())
