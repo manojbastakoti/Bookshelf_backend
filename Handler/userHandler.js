@@ -78,6 +78,35 @@ const loginUser=async(req,res)=>{
     })
 }
 
+const changePassword = async(req,res)=>{
+    try {
+        const id= req.params.id;
+        const body=req.body;
+        const user=await UserModel.findOne({_id:id})
+
+        const change= await user.comparePassword(body.old_password);
+        if(!change){
+            res.json({
+                success:false,
+                message:"Old password is wrong!",
+            });
+            return false;
+        }
+        
+        user.password=body.new_password;
+        await user.save();
+
+        res.json({
+            success:true,
+            message:"Password changed successfully",
+        });
+
+    } catch (error) {
+        console.log(error)
+    }
+
+};
+
 module.exports={
-    getUsers,addUser,loginUser
+    getUsers,addUser,loginUser,changePassword,
 }
