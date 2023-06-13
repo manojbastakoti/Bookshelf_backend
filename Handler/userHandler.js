@@ -1,4 +1,4 @@
-const {createToken}=require("../utils")
+const {createToken, verifyToken}=require("../utils")
 
 const UserModel = require("../Models/User")
 const getUsers =async(req,res)=>{
@@ -50,6 +50,7 @@ const loginUser=async(req,res)=>{
         res.json({
             success:false,
             message:"Invalid User!",
+            user
         });
         return false;
     }
@@ -63,9 +64,18 @@ const loginUser=async(req,res)=>{
         return false;
     }
 
-    const token =createToken({data:result});
+    const token =createToken({
+        data:{
+            name:user.name,
+            email:user.email,
+        },
+    })
+    
+    
     user.token=token;
     await user.save();
+    // const tokenInfo = verifyToken(token)
+    // console.log(tokenInfo.data.email)
     // console.log(user)
     res.cookie("auth",token)
 
@@ -73,7 +83,10 @@ const loginUser=async(req,res)=>{
         success:true,
         message:"Login successfull",
         data:{
-            token
+            token,
+            name:user.name,
+            email:user.email,
+
         },
     })
 }
@@ -107,6 +120,27 @@ const changePassword = async(req,res)=>{
 
 };
 
+const getProfile=async(req,res)=>{
+    try {
+    // const id = req.user._id
+    // const profileInfo=await UserModel.findById(id).select("-password")
+    const token =req.body.token;
+    console.log(token)
+    if(!token) return res.json({
+        success:false,
+        message:"No User Found!",
+    })
+    const tokenInfo = await verifyToken(token)
+    console.log(tokenInfo);
+    return res.json({
+        success:true,
+        data:tokenInfo.data,
+    })
+    } catch (error) {
+        console.log(error)
+    }
+};
+
 module.exports={
-    getUsers,addUser,loginUser,changePassword,
+    getUsers,addUser,loginUser,changePassword,getProfile,
 }

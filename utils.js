@@ -4,7 +4,7 @@ const path=require("path");
 
 module.exports={
     createToken :function(payload){
-        const token = jwt.sign({payload},process.env.JWT_TOKEN,{expiresIn:"1h"});
+        const token = jwt.sign(payload,process.env.JWT_TOKEN,{expiresIn:"1h"});
         return token;
     },
 

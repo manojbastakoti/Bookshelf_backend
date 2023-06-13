@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 const express= require("express")
 const app=express();
 require("./Database/connection");
-const {getUsers,addUser,loginUser, changePassword}=require("./Handler/userHandler");
+const {getUsers,addUser,loginUser, changePassword,getProfile}=require("./Handler/userHandler");
 const {getBlogs,addBlog,editBlog, deleteBlog}=require("./Handler/blogHandler");
 const { authenticateToken } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
@@ -21,6 +21,9 @@ app.use("uploads/" ,express.static("uploads"));
 app.get("/users",authenticateToken ,getUsers);
 app.post('/user/add',addUser);
 app.post('/user/login',loginUser);
+
+//Profile_info
+app.post("/profile_info",authenticateToken,getProfile);
 
 //changePassword
 app.patch('/user/changepassword/:id',changePassword);
