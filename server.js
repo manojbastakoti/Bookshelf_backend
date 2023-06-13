@@ -7,6 +7,7 @@ const {getUsers,addUser,loginUser, changePassword,getProfile}=require("./Handler
 const {getBlogs,addBlog,editBlog, deleteBlog}=require("./Handler/blogHandler");
 const { authenticateToken } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
+const { getBooks, addBook } = require("./Handler/bookHandler");
 
 
 app.use(cors({credentials:true ,origin:"http://localhost:5173"}))
@@ -34,7 +35,9 @@ app.post("/blog/add",addBlog)
 app.put("/blog/edit/:id",editBlog)
 app.delete("/blog/delete/:id",deleteBlog)
 
-
+//book
+app.get("/books",getBooks);
+app.post("/book/add",addBook);
 
 
 const port=8000;
