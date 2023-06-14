@@ -5,8 +5,8 @@ module.exports={
     authenticateToken:async function(req,res,next){
         try {
             // console.log(req.cookie)
-            const token=req.cookies.auth
-            // const token=||req.headers["x-authorization"]||req.cookies.auth
+            // const token=req.cookies.auth
+            const token=req.cookies.auth||req.headers["authorization"]
             if(!token) return res.send("Access denied!");
 
             const tokenInfo=await verifyToken(token)

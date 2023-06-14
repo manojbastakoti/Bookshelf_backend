@@ -125,13 +125,13 @@ const getProfile=async(req,res)=>{
     // const id = req.user._id
     // const profileInfo=await UserModel.findById(id).select("-password")
     const token =req.body.token;
-    console.log(token)
+    // console.log(token)
     if(!token) return res.json({
         success:false,
         message:"No User Found!",
     })
     const tokenInfo = await verifyToken(token)
-    console.log(tokenInfo);
+    // console.log(tokenInfo);
     return res.json({
         success:true,
         data:tokenInfo.data,

@@ -16,7 +16,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(fileUpload())
 
-app.use("uploads/" ,express.static("uploads"));
+app.use("/uploads" ,express.static("uploads"));
 
 //user
 app.get("/users",authenticateToken ,getUsers);

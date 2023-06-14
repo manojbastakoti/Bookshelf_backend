@@ -6,7 +6,7 @@ const getBlogs = async (req, res) => {
     const blogs = await BlogModel.find();
     console.log(blogs);
     res.json({
-      blogs: blogs,
+      data: blogs,
     });
   } catch (error) {
     console.log(object);
@@ -35,7 +35,7 @@ const addBlog = async (req, res) => {
     res.json({
       success: true,
       message: "Your article added successfully",
-      blog,
+      data:blog,
     });
   } catch (error) {
     console.log(error);
