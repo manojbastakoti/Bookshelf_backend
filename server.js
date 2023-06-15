@@ -4,7 +4,7 @@ const express= require("express")
 const app=express();
 require("./Database/connection");
 const {getUsers,addUser,loginUser, changePassword,getProfile}=require("./Handler/userHandler");
-const {getBlogs,addBlog,editBlog, deleteBlog}=require("./Handler/blogHandler");
+const {getBlogs,addBlog,editBlog, deleteBlog, getBlogById}=require("./Handler/blogHandler");
 const { authenticateToken } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
 const { getBooks, addBook } = require("./Handler/bookHandler");
@@ -31,6 +31,7 @@ app.patch('/user/changepassword/:id',changePassword);
 
 //blog
 app.get("/blogs",getBlogs)
+app.get("/blog/:id", getBlogById)
 app.post("/blog/add",addBlog)
 app.put("/blog/edit/:id",editBlog)
 app.delete("/blog/delete/:id",deleteBlog)

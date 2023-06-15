@@ -1,15 +1,56 @@
+const moment = require("moment/moment");
 const BlogModel = require("../Models/Blog");
 const { imageValidation, uploadImage } = require("../utils");
 
 const getBlogs = async (req, res) => {
   try {
     const blogs = await BlogModel.find();
-    console.log(blogs);
+    // console.log(blogs);
+    const finalBlogs = [];
+    blogs.forEach((blog) => {
+      finalBlogs.push({
+        id:blog._id,
+        title: blog.title,
+        description: blog.description,
+        author: blog.author,
+        image: blog.image,
+        createdAt: blog.createdAt,
+      });
+    });
+    finalBlogs.forEach((blog) => {
+      blog.createdAt = moment(blog.createdAt).fromNow();
+    });
+    // console.log(finalBlogs);
+
     res.json({
-      data: blogs,
+      success: true,
+      data: finalBlogs,
     });
   } catch (error) {
-    console.log(object);
+    console.log(error);
+  }
+};
+
+//Retrive Single blog
+const getBlogById = async (req, res) => {
+  try {
+    const blog = await BlogModel.findById(req.params.id);
+    // console.log(blog);
+    if (!blog) {
+      res.json({
+        success: true,
+        message: "Blog not found !",
+        data: null,
+      });
+      return false;
+    }
+    res.json({
+      success: true,
+      message: "Blog found !",
+      data: blog,
+    });
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -91,6 +132,7 @@ const deleteBlog =async(req,res)=>{
 
 module.exports = {
   getBlogs,
+  getBlogById,
   addBlog,
   editBlog,
   deleteBlog,
