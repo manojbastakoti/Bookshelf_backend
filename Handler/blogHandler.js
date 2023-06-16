@@ -11,7 +11,9 @@ const getBlogs = async (req, res) => {
       finalBlogs.push({
         id:blog._id,
         title: blog.title,
+        introduction:blog.introduction,
         description: blog.description,
+        author_id: blog.author_id,
         author: blog.author,
         image: blog.image,
         createdAt: blog.createdAt,
@@ -20,7 +22,7 @@ const getBlogs = async (req, res) => {
     finalBlogs.forEach((blog) => {
       blog.createdAt = moment(blog.createdAt).fromNow();
     });
-    // console.log(finalBlogs);
+    console.log(finalBlogs);
 
     res.json({
       success: true,
@@ -49,6 +51,7 @@ const getBlogById = async (req, res) => {
       message: "Blog found !",
       data: blog,
     });
+    
   } catch (error) {
     console.log(error);
   }
@@ -67,11 +70,12 @@ const addBlog = async (req, res) => {
 
     const blog = await new BlogModel({
       title: body.title,
+      introduction:body.introduction,
       description: body.description,
+      author_id: body.author_id,
       author: body.author,
       image: "uploads/" + imageFileName,
     });
-
     await blog.save();
     res.json({
       success: true,

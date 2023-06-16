@@ -66,6 +66,7 @@ const loginUser=async(req,res)=>{
 
     const token =createToken({
         data:{
+            user_id: user._id,
             name:user.name,
             email:user.email,
         },
@@ -84,6 +85,7 @@ const loginUser=async(req,res)=>{
         message:"Login successfull",
         data:{
             token,
+            user_id:user._id,
             name:user.name,
             email:user.email,
 

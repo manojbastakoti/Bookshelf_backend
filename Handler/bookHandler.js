@@ -22,7 +22,7 @@ const addBook = async (req, res) => {
       const imageFileName = uploadImage("uploads", imageFile);
   
       const book = await new BookModel({
-        title: body.title,
+        title:body.title,
         price:body.price,
         cover:"uploads/"+imageFileName,
         description: body.description,
