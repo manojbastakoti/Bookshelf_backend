@@ -92,9 +92,27 @@ const editBlog = async (req, res) => {
     
     const id = req.params.id;
     const body = req.body;
+    // console.log(req.user);
     const editBlog = await BlogModel.findByIdAndUpdate({_id:id} ,body,{new:true})
-        
-    
+
+    // const blog = await BlogModel.findById(id);
+    // console.log(blog)    
+    if (!editBlog)
+    return res.json({
+      success: false,
+      message: "Blog not found!",
+    });
+    console.log(editBlog.author_id);
+    console.log(req.user._id.toJSON());
+    console.log(editBlog.author_id !== req.user._id);
+
+  if (editBlog.author_id !== req.user._id.toJSON()) {
+    return res.json({
+      success: false,
+      message: "Only author can edit!",
+    });
+  }
+
     if (req.files && req.files.image) {
         let imageFileName = null;
         const imageFile = req.files.image;
@@ -123,6 +141,24 @@ const editBlog = async (req, res) => {
 const deleteBlog =async(req,res)=>{
     try {
         const id=req.params.id;
+        console.log(req.user);
+        const blog = await BlogModel.findById(id);
+        console.log(blog)
+        if (!blog)
+          return res.json({
+            success: false,
+            message: "Blog not found!",
+          });
+          console.log(blog.author_id);
+          console.log(req.user._id.toJSON());
+          console.log(blog.author_id !== req.user._id);
+      
+        if (blog.author_id !== req.user._id.toJSON()) {
+          return res.json({
+            success: false,
+            message: "Only author can delete!",
+          });
+        }
       
         const deleteBlog=await BlogModel.findByIdAndRemove({_id:id});
         res.json({

@@ -33,8 +33,8 @@ app.patch('/user/changepassword/:id',changePassword);
 app.get("/blogs",getBlogs)
 app.get("/blog/:id", getBlogById)
 app.post("/blog/add",addBlog)
-app.put("/blog/edit/:id",editBlog)
-app.delete("/blog/delete/:id",deleteBlog)
+app.put("/blog/edit/:id",authenticateToken,editBlog)
+app.delete("/blog/delete/:id",authenticateToken,deleteBlog)
 
 //book
 app.get("/books",getBooks);
