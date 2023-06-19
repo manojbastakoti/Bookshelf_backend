@@ -8,6 +8,7 @@ const {getBlogs,addBlog,editBlog, deleteBlog, getBlogById, addViews}=require("./
 const { authenticateToken } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
 const { getBooks, addBook } = require("./Handler/bookHandler");
+const { addComment, getComments } = require("./Handler/commentHandler");
 
 
 app.use(cors({credentials:true ,origin:"http://localhost:5173"}))
@@ -38,6 +39,10 @@ app.delete("/blog/delete/:id",authenticateToken,deleteBlog)
 
 // add views
 app.post("/article-add-views/:id", addViews);
+
+// comments
+app.post("/comment/add", authenticateToken, addComment);
+app.get("/comment/:blogId", getComments);
 
 //book
 app.get("/books",getBooks);
