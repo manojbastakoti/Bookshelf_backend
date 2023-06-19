@@ -1,6 +1,7 @@
 const moment = require("moment/moment");
 const BlogModel = require("../Models/Blog");
 const { imageValidation, uploadImage } = require("../utils");
+const fs= require("fs");
 
 const getBlogs = async (req, res) => {
   try {
@@ -16,6 +17,7 @@ const getBlogs = async (req, res) => {
         author_id: blog.author_id,
         author: blog.author,
         image: blog.image,
+        views: blog.views,
         createdAt: blog.createdAt,
       });
     });
@@ -93,10 +95,10 @@ const editBlog = async (req, res) => {
     const id = req.params.id;
     const body = req.body;
     // console.log(req.user);
-    const editBlog = await BlogModel.findByIdAndUpdate({_id:id} ,body,{new:true})
-
     // const blog = await BlogModel.findById(id);
     // console.log(blog)    
+    const editBlog = await BlogModel.findByIdAndUpdate({_id:id} ,body,{new:true})
+
     if (!editBlog)
     return res.json({
       success: false,
@@ -119,6 +121,11 @@ const editBlog = async (req, res) => {
       if (!imageValidation(imageFile.mimetype, res)) {
         return false;
       }
+
+      fs.unlink(editBlog.image, function (error) {
+        console.log(error);
+      });
+
     imageFileName = uploadImage("uploads", imageFile);
     editBlog.image = imageFileName?`uploads/${imageFileName}`:null
     }
@@ -159,7 +166,9 @@ const deleteBlog =async(req,res)=>{
             message: "Only author can delete!",
           });
         }
-      
+        fs.unlink(blog.image, function (error) {
+          console.log(error);
+        });
         const deleteBlog=await BlogModel.findByIdAndRemove({_id:id});
         res.json({
             success:true,
@@ -169,6 +178,31 @@ const deleteBlog =async(req,res)=>{
         console.log(error)
     }
 }
+const addViews = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const blog = await BlogModel.findById(id);
+    if (!blog)
+      return res.json({
+        success: false,
+        message: "Blog not found!",
+      });
+
+    if (!blog.viewed.includes(req.socket.remoteAddress)) {
+      blog.views++;
+      blog.viewed.push(req.socket.remoteAddress);
+    }
+
+    await blog.save();
+
+    return res.json({
+      success: true,
+      message: "+1 views",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   getBlogs,
@@ -176,4 +210,5 @@ module.exports = {
   addBlog,
   editBlog,
   deleteBlog,
+  addViews
 };
