@@ -5,22 +5,24 @@ const CommentsModel = require("../Models/Comment");
 const addComment = async (req, res) => {
     try {
         const { blog_id, comment } = req.body;
+
         if( !blog_id || !comment) return res.json({
             success: false,
             message: "Insufficient data!"
         });
 
-        const user_id = req.user._id
+        const user= req.user._id
         const created = await CommentsModel.create({
-            user_id,
-            article_id,
-            comment
+            user,
+            blog:blog_id,
+            comment,
         });
+        console.log(created)
 
         return res.json({
             success: true, 
             message: "Comment added!",
-            data: created
+            data:created,
         });
 
     } catch (error) {
@@ -35,18 +37,25 @@ const addComment = async (req, res) => {
 const getComments = async (req, res) => {
     try {
         const blogId = req.params.blogId;
-        const blog = await BlogModel.findById(articleId);
-        if(!article) return res.json({
+        // console.log(blogId);
+        const blog = await BlogModel.findById(blogId);
+        if(!blog) return res.json({
             success: false, 
-            message: "Article not found!"
+            message: "Blog not found!"
         });
+        // console.log(blog)
 
-        const comments = await CommentsModel.find({ blog_id: blogId }).populate("user", ["name"]);
+        
+    const comments = await CommentsModel.find({
+        blog: blogId,
+      }).sort({ createdAt: -1 }).populate("user");
+      
+        console.log(comments);
 
         return res.json({
             success: false, 
-            message: `Comment list for ${articleId}`,
-            data: comments
+            message: `Comment list for ${blogId}`,
+            data: comments,
         })
 
     } catch (error) {

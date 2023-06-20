@@ -6,7 +6,7 @@ module.exports={
         try {
             // console.log(req.cookie)
             // const token=req.cookies.auth
-            const token=req.cookies.auth||req.headers["authorization"]
+            const token=req.headers["authorization"]||req.cookies.auth;
             if(!token) return res.send("Access denied!");
 
             const tokenInfo=await verifyToken(token)

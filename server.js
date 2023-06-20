@@ -31,7 +31,7 @@ app.post("/profile_info",authenticateToken,getProfile);
 app.patch('/user/changepassword/:id',changePassword);
 
 //blog
-app.get("/blogs",getBlogs)
+app.get("/blogs/:pageNumber",getBlogs)
 app.get("/blog/:id", getBlogById)
 app.post("/blog/add",addBlog)
 app.put("/blog/edit/:id",authenticateToken,editBlog)
