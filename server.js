@@ -9,6 +9,7 @@ const { authenticateToken } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
 const { getBooks, addBook } = require("./Handler/bookHandler");
 const { addComment, getComments } = require("./Handler/commentHandler");
+const { getPopularBooks, getPopularBooksById } = require("./Handler/popularBooksHandler");
 
 
 app.use(cors({credentials:true ,origin:"http://localhost:5173"}))
@@ -48,6 +49,11 @@ app.get("/comment/:blogId", getComments);
 //book
 app.get("/books",getBooks);
 app.post("/book/add",addBook);
+
+//popularBooks
+app.get("/popularBooks",getPopularBooks)
+app.get("/popularBook/:id",getPopularBooksById)
+
 
 
 const port=8000;
