@@ -1,49 +1,51 @@
-const jwt = require('jsonwebtoken');
-const fs= require("fs");
-const path=require("path");
+const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const path = require("path");
 
-module.exports={
-    createToken :function(payload){
-        const token = jwt.sign(payload,process.env.JWT_TOKEN,{expiresIn:"1h"});
-        return token;
-    },
+module.exports = {
+  createToken: function (payload) {
+    const token = jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: "1h" });
+    return token;
+  },
 
-    verifyToken:function(token){
-        const decoded=jwt.verify(token,process.env.JWT_TOKEN);
-        return decoded;
-    },
+  generateRefreshToken: function (id) {
+    return jwt.sign({ id }, process.env.JWT_TOKEN, { expiresIn: "3d" });
+  },
 
-    imageValidation:function(mimeType,res){
-        if(!mimeType.startsWith("image")){
-            res.json({
-                success:false,
-                message:"Invalid file type"
-            });
-            return false;
-        }
-        return true;
-    },
+  verifyToken: function (token) {
+    const decoded = jwt.verify(token, process.env.JWT_TOKEN);
+    return decoded;
+  },
 
-    uploadImage:function(dir,imageFile){
-        const hashedFile =imageFile.md5;
-        const extension =path.extname(imageFile.name);
+  imageValidation: function (mimeType, res) {
+    if (!mimeType.startsWith("image")) {
+      res.json({
+        success: false,
+        message: "Invalid file type",
+      });
+      return false;
+    }
+    return true;
+  },
 
-        if(!fs.existsSync("uploads")){
-            fs.mkdirSync("uploads")
-        }
+  uploadImage: function (dir, imageFile) {
+    const hashedFile = imageFile.md5;
+    const extension = path.extname(imageFile.name);
 
-        const imageFileName=hashedFile + extension;
-        imageFile.mv(dir + "/"+imageFileName,function(err){
-            if(err){
-                console.log(error);
-                res.json({
-                    success:false,
-                    message:"Something went wrong!"
+    if (!fs.existsSync("uploads")) {
+      fs.mkdirSync("uploads");
+    }
 
-                });
-            }
+    const imageFileName = hashedFile + extension;
+    imageFile.mv(dir + "/" + imageFileName, function (err) {
+      if (err) {
+        console.log(error);
+        res.json({
+          success: false,
+          message: "Something went wrong!",
         });
-        return imageFileName;
-
-    },
+      }
+    });
+    return imageFileName;
+  },
 };

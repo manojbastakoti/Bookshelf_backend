@@ -23,5 +23,25 @@ module.exports={
             if(error.message==="jwt expired") res.send("Invalid token!")
         }
 
+    },
+
+    isAdmin:async function(req,res,next){
+        try {
+            console.log(req.user)
+            const {email}=req.user;
+            const adminUser = await UserModel.findOne({email});
+            if(adminUser.role !== "admin"){
+                res.json({
+                    success:false,
+                    message:"Access denied!",
+                })
+            }
+            else{
+                next();
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 }

@@ -1,4 +1,4 @@
-const {createToken, verifyToken}=require("../utils")
+const {createToken, verifyToken, generateRefreshToken}=require("../utils")
 
 const UserModel = require("../Models/User")
 const getUsers =async(req,res)=>{
@@ -64,6 +64,19 @@ const loginUser=async(req,res)=>{
         });
         return false;
     }
+
+    const refreshToken = await generateRefreshToken(user?._id);
+    const updateuser = await UserModel.findByIdAndUpdate(
+      user.id,
+      {
+        refreshToken: refreshToken,
+      },
+      { new: true }
+    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
+    });
 
     const token =createToken({
         data:{
@@ -190,6 +203,36 @@ const getProfile=async(req,res)=>{
     }
 };
 
+const getUserById = async(req,res)=>{
+    try {
+        const id= req.params.id
+        // console.log(id)
+        const userInfo = await UserModel.findById(id).select("-password");
+        res.json({
+            userInfo
+        })
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+const deleteUserById = async(req,res)=>{
+    try {
+        const id= req.params.id
+        // console.log(id)
+        const deleteUser = await UserModel.findByIdAndRemove(id);
+        res.json({
+            success:true,
+            message:"User Deleted Successfully",
+            deleteUser
+        })
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
 module.exports={
-    getUsers,addUser,googleLogin,loginUser,changePassword,getProfile,
+    getUsers,addUser,googleLogin,loginUser,changePassword,getProfile,getUserById,deleteUserById,
 }

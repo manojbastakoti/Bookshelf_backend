@@ -7,6 +7,11 @@ const userSchema= new mongoose.Schema({
         required:true,
 
     },
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user",
+      },
     token:{
         type:String,
     },
@@ -23,6 +28,11 @@ const userSchema= new mongoose.Schema({
         type:String,
         required:true,
     },
+    cart:{
+        type:Array,
+        default:[],
+    },
+    wishList:[{type:mongoose.Schema.Types.ObjectId,ref:"Book"}],
 });
 
 userSchema.pre("save" ,async function(next){
