@@ -7,7 +7,7 @@ const {getUsers,addUser,loginUser, changePassword,getProfile, googleLogin, getUs
 const {getBlogs,addBlog,editBlog, deleteBlog, getBlogById, addViews}=require("./Handler/blogHandler");
 const { authenticateToken, isAdmin } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
-const { getBooks, addBook } = require("./Handler/bookHandler");
+const { getBooks, addBook, getBookById, updateBook, deleteBookById } = require("./Handler/bookHandler");
 const { addComment, getComments } = require("./Handler/commentHandler");
 const { getPopularBooks, getPopularBooksById } = require("./Handler/popularBooksHandler");
 
@@ -52,6 +52,10 @@ app.get("/comment/:blogId", getComments);
 //book
 app.get("/books",getBooks);
 app.post("/book/add",addBook);
+app.get("/book/:id",getBookById);
+app.put("/book/update/:id",updateBook);
+app.delete("/book/delete/:id",deleteBookById)
+
 
 //popularBooks
 app.get("/popularBooks",getPopularBooks)
