@@ -13,7 +13,7 @@ const genreSchema = new mongoose.Schema(
     books: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Book",
+        ref: "book",
       },
     ],
   },
@@ -27,4 +27,5 @@ genreSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("genre", genreSchema);
+const GenreModel = mongoose.model("genre",genreSchema);
+module.exports = GenreModel

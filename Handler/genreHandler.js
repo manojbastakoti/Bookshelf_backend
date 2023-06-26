@@ -1,10 +1,11 @@
-const Genre = require("../Models/Genre");
+const GenreModel = require("../Models/Genre");
+
 
 const createGenre =async(req,res)=>{
     try {
         const { name } = req.body;
         const slug = name.split(" ").join("-");
-        const alreadyExists = await Genre.exists({
+        const alreadyExists = await GenreModel.exists({
           slug,
         });
     
@@ -16,16 +17,38 @@ const createGenre =async(req,res)=>{
           });
         }
     
-        const genre = await Genre.create({ name });
+        const genre = await GenreModel.create({ name });
         res.json({
           success: true,
           message: "Genre created successfully",
           data: genre,
         });
       } catch (error) {
-        errorHandler({ error, res });
+        console.log(error);
       }
     
 };
 
-model.exports={createGenre}
+const getGenre= async(req,res)=>{
+  try {
+    const genres = await GenreModel.find()
+    if(!genres){
+      res.json({
+        success:false,
+        message:"No genre found!"
+      });
+      return false;
+    }
+    res.json({
+      success:true,
+      message:"Genre found",
+      genres
+    })
+
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+module.exports={createGenre,getGenre}

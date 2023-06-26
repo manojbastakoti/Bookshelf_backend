@@ -24,6 +24,17 @@ const bookSchema = new mongoose.Schema({
   genre:{
     type:String,
   },
+  ratings: [
+    {
+      star: Number,
+      comment: String,
+      postedby: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    },
+  ],
+  totalrating: {
+    type: String,
+    default: 0,
+  },
   // owner: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   ref: "User",

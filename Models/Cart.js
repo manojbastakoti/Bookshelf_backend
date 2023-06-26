@@ -5,17 +5,17 @@ var cartSchema = new mongoose.Schema(
   {
     books: [
       {
-        product: {
+        book: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "book",
         },
         count: Number,
-        color: String,
+        genre: String,
         price: Number,
       },
     ],
     cartTotal: Number,
-    totalAfterDiscount: Number,
+    // totalAfterDiscount: Number,
     orderby: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -26,5 +26,5 @@ var cartSchema = new mongoose.Schema(
   }
 );
 
-//Export the model
-module.exports = mongoose.model("cart", cartSchema);
+const CartModel = mongoose.model("cart",cartSchema);
+module.exports = CartModel

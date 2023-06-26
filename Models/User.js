@@ -32,7 +32,7 @@ const userSchema= new mongoose.Schema({
         type:Array,
         default:[],
     },
-    wishList:[{type:mongoose.Schema.Types.ObjectId,ref:"Book"}],
+    wishList:[{type:mongoose.Schema.Types.ObjectId,ref:"book"}],
 });
 
 userSchema.pre("save" ,async function(next){
