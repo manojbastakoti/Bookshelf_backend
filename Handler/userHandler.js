@@ -1,8 +1,11 @@
 const { createToken, verifyToken, generateRefreshToken } = require("../utils");
 
+const uniqid = require('uniqid');
+
 const UserModel = require("../Models/User");
 const CartModel = require("../Models/Cart");
 const BookModel = require("../Models/Book");
+const OrderModel = require("../Models/Order");
 const getUsers = async (req, res) => {
   try {
     const users = await UserModel.find();
@@ -81,6 +84,7 @@ const loginUser = async (req, res) => {
       user_id: user._id,
       name: user.name,
       email: user.email,
+      role:user.role
     },
   });
 
@@ -99,6 +103,7 @@ const loginUser = async (req, res) => {
       user_id: user._id,
       name: user.name,
       email: user.email,
+      role:user.role,
     },
   });
 };
@@ -143,6 +148,7 @@ const adminLogin = async (req, res) => {
       user_id: user._id,
       name: user.name,
       email: user.email,
+      role:user.role
     },
   });
 
@@ -191,6 +197,7 @@ const googleLogin = async (req, res) => {
         user_id: user._id,
         name: user.name,
         email: user.email,
+        role:user.role,
       },
     });
     user.token = token;
@@ -205,6 +212,7 @@ const googleLogin = async (req, res) => {
         user_id: user._id,
         name: user.name,
         email: user.email,
+        role:user.role,
       },
     });
   } catch (error) {
@@ -366,6 +374,58 @@ const getUserCart = async (req, res) => {
     }
   };
 
+  const createOrder = async (req, res) => {
+    const { wallet } = req.body;
+    const { _id } = req.user;
+
+    try {
+      if (!wallet)res.json("Create wallet order failed");
+      const user = await UserModel.findById(_id);
+      let userCart = await CartModel.findOne({ orderby: user._id });
+      let finalAmout = 0;
+        finalAmount = userCart.cartTotal;
+  
+      let newOrder = await new OrderModel({
+        books: userCart.books,
+        paymentIntent: {
+          id: uniqid(),
+          method: "wallet",
+          amount: finalAmount,
+          status:"Payment with Wallet",
+          created: Date.now(),
+          currency: "Rupees",
+        },
+        orderby: user._id,
+        orderStatus: "Payment with Wallet",
+      }).save();
+      let update = userCart.books.map((item) => {
+        return {
+          updateOne: {
+            filter: { _id: item.book._id },
+            update: { $inc: { quantity: -item.count, sold: +item.count } },
+          },
+        };
+      });
+      const updated = await BookModel.bulkWrite(update, {});
+      res.json({ message: "success" });
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  const getOrders =async (req, res) => {
+    const { _id } = req.user;
+    try {
+      const userorders = await OrderModel.findOne({ orderby: _id })
+        .populate("books.book")
+        .populate("orderby")
+        .exec();
+      res.json(userorders);
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
 module.exports = {
   getUsers,
   addUser,
@@ -379,5 +439,7 @@ module.exports = {
   getWishlist,
   userCart,
   getUserCart,
-  emptyCart
+  emptyCart,
+  createOrder,
+  getOrders
 };

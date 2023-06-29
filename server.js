@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 const express= require("express")
 const app=express();
 require("./Database/connection");
-const {getUsers,addUser,loginUser, changePassword,getProfile, googleLogin, getUserById, deleteUserById, adminLogin, getWishlist, userCart, getUserCart, emptyCart}=require("./Handler/userHandler");
+const {getUsers,addUser,loginUser, changePassword,getProfile, googleLogin, getUserById, deleteUserById, adminLogin, getWishlist, userCart, getUserCart, emptyCart, createOrder, getOrders}=require("./Handler/userHandler");
 const {getBlogs,addBlog,editBlog, deleteBlog, getBlogById, addViews}=require("./Handler/blogHandler");
 const { authenticateToken, isAdmin } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
@@ -11,6 +11,7 @@ const { getBooks, addBook, getBookById, updateBook, deleteBookById, addToWishlis
 const { addComment, getComments } = require("./Handler/commentHandler");
 const { getPopularBooks, getPopularBooksById } = require("./Handler/popularBooksHandler");
 const { getGenre, createGenre } = require("./Handler/genreHandler");
+const { createContact, updateContact, deleteContact, getContact, getallContact } = require("./Handler/ContactHandler");
 
 
 app.use(cors({credentials:true ,origin:"http://localhost:5173"}))
@@ -31,6 +32,8 @@ app.get("/get-user/:id",authenticateToken, isAdmin, getUserById);
 app.post('/cart',authenticateToken,userCart)
 app.get("/user-cart",authenticateToken,getUserCart);
 app.delete("/empty-cart",authenticateToken,emptyCart)
+app.post("/cart/order",authenticateToken,createOrder)
+app.get("/get-orders",authenticateToken,getOrders)
 app.get("/wishlist",authenticateToken, getWishlist);
 app.delete("/deleteUser/:id",deleteUserById);
 
@@ -74,7 +77,12 @@ app.post("/genre/add",createGenre)
 app.get("/popularBooks",getPopularBooks)
 app.get("/popularBook/:id",getPopularBooksById)
 
-
+//contact
+app.post("/contact/add", createContact)
+app.put("/contact/:id", authenticateToken,isAdmin, updateContact)
+app.delete("/delete/:id", authenticateToken,isAdmin, deleteContact)
+app.get("/contact/:id",getContact);
+app.get("/contact",getallContact)
 
 const port=8000;
 app.listen(port, function(){

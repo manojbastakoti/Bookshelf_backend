@@ -10,8 +10,10 @@ const addComment = async (req, res) => {
             success: false,
             message: "Insufficient data!"
         });
-
-        const user= req.user._id
+console.log("user find",req.user)
+        const user= req.user
+        console.log("user",user)
+        
         const created = await CommentsModel.create({
             user,
             blog:blog_id,
@@ -48,14 +50,14 @@ const getComments = async (req, res) => {
         
     const comments = await CommentsModel.find({
         blog: blogId,
-      }).sort({ createdAt: -1 }).populate("user");
+      }).sort({ createdAt: -1 }).populate("user","name");
       
         console.log(comments);
 
         return res.json({
-            success: false, 
+            success: true, 
             message: `Comment list for ${blogId}`,
-            data: comments,
+            comments,
         })
 
     } catch (error) {
