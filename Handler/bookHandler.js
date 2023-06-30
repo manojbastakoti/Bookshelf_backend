@@ -41,8 +41,9 @@ const addBook = async (req, res) => {
       cover: "uploads/" + imageFileName,
       description: body.description,
       author: body.author,
-      publishedDate: body.date,
+      publishedDate: body.publishedDate,
       genre: body.genre,
+      ISBN:body.ISBN,
     });
 
     await book.save();
