@@ -24,6 +24,9 @@ const bookSchema = new mongoose.Schema({
   genre:{
     type:String,
   },
+  quantity:{
+    type:Number,
+  },
   ISBN:{
     type:Number,
   },

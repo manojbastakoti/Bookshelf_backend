@@ -44,6 +44,7 @@ const addBook = async (req, res) => {
       publishedDate: body.publishedDate,
       genre: body.genre,
       ISBN:body.ISBN,
+      quantity:body.quantity,
     });
 
     await book.save();

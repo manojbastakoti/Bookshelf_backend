@@ -3,23 +3,22 @@ const mongoose = require("mongoose"); // Erase if already required
 // Declare the Schema of the Mongo model
 var cartSchema = new mongoose.Schema(
   {
-    books: [
-      {
-        book: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "book",
-        },
-        count: Number,
-        genre: String,
-        price: Number,
-      },
-    ],
-    cartTotal: Number,
-    // totalAfterDiscount: Number,
-    orderby: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+    userId:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user",
     },
+    bookId:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"book",
+    },
+    quantity:{
+      type:Number,
+      required:true
+    },
+    price:{
+      type:Number,
+      required:true
+    }
   },
   {
     timestamps: true,

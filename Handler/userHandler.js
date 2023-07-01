@@ -300,44 +300,29 @@ const getWishlist = async (req, res) => {
   const { _id } = req.user;
   try {
     const findUser = await UserModel.findById(_id).populate("wishList");
-    res.json(findUser);
+    const wishlist = findUser.wishList.map((item) => item.toObject());
+    res.json(wishlist);
   } catch (error) {
     console.log(error);
   }
 };
 
 const userCart = async (req, res) => {
-  const { cart } = req.body;
+  const {bookId,quantity,price } = req.body;
   const { _id } = req.user;
   try {
-    let books = [];
-    const user = await UserModel.findById(_id);
-    // check if user already have product in cart
-    const alreadyExistCart = await CartModel.findOne({ orderby: user._id });
-    if (alreadyExistCart) {
-      alreadyExistCart.remove();
-    }
-    for (let i = 0; i < cart.length; i++) {
-      let object = {};
-      object.book = cart[i]._id;
-      object.count = cart[i].count;
-      object.genre = cart[i].genre;
-      let getPrice = await BookModel.findById(cart[i]._id)
-        .select("price")
-        .exec();
-      object.price = getPrice.price;
-      books.push(object);
-    }
-    let cartTotal = 0;
-    for (let i = 0; i < books.length; i++) {
-      cartTotal = cartTotal + books[i].price * books[i].count;
-    }
+    
     let newCart = await new CartModel({
-      books,
-      cartTotal,
-      orderby: user?._id,
+      userId:_id,
+      bookId,
+      price,
+      quantity
     }).save();
-    res.json(newCart);
+    res.json({
+      success:true,
+      message:"Book is added to the Cart",
+      newCart
+    });
   } catch (error) {
     console.log(error);
   }
