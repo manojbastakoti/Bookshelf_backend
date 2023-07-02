@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 const express= require("express")
 const app=express();
 require("./Database/connection");
-const {getUsers,addUser,loginUser, changePassword,getProfile, googleLogin, getUserById, deleteUserById, adminLogin, getWishlist, userCart, getUserCart, emptyCart, createOrder, getOrders}=require("./Handler/userHandler");
+const {getUsers,addUser,loginUser, changePassword,getProfile, googleLogin, getUserById, deleteUserById, adminLogin, getWishlist, userCart, getUserCart, emptyCart, createOrder, getOrders, removeProductFromCart}=require("./Handler/userHandler");
 const {getBlogs,addBlog,editBlog, deleteBlog, getBlogById, addViews}=require("./Handler/blogHandler");
 const { authenticateToken, isAdmin } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
@@ -31,6 +31,8 @@ app.post("/user/google-login", googleLogin);
 app.get("/get-user/:id",authenticateToken, isAdmin, getUserById);
 app.post('/cart',authenticateToken,userCart)
 app.get("/user-cart",authenticateToken,getUserCart);
+app.delete("/delete-user-cart/:id",authenticateToken,removeProductFromCart);
+
 app.delete("/empty-cart",authenticateToken,emptyCart)
 app.post("/cart/order",authenticateToken,createOrder)
 app.get("/get-orders",authenticateToken,getOrders)

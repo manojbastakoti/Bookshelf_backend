@@ -331,8 +331,8 @@ const userCart = async (req, res) => {
 const getUserCart = async (req, res) => {
     const { _id } = req.user;
     try {
-      const cart = await CartModel.findOne({ orderby: _id }).populate(
-        "books.book"
+      const cart = await CartModel.find({ userId: _id }).populate(
+        "bookId"
       );
       if(!cart){
         res.json({
@@ -347,12 +347,33 @@ const getUserCart = async (req, res) => {
     }
   };
 
+  const removeProductFromCart = async (req, res) => {
+    const { _id } = req.user;
+    const id =req.params.id;
+    console.log(id)
+    // console.log(cartItemId)
+    try {
+      if (!id) {
+        res.json({
+          success:false,
+          message:"Invalid Cart Item Id",
+        })
+        return false;
+      }
+      const deleteproductfromcart = await CartModel.findOneAndRemove({ userId: _id, _id:id})
+      console.log(deleteproductfromcart)
+          res.json(deleteproductfromcart);
+        } catch (error) {
+          console.log(error)
+        }
+      };
+
   const emptyCart = async (req, res) => {
     const { _id } = req.user;
     
     try {
       const user = await UserModel.findOne({ _id });
-      const cart = await CartModel.findOneAndRemove({ orderby: user._id });
+      const cart = await CartModel.findOneAndRemove({ userId:_id, });
       res.json(cart);
     } catch (error) {
       console.log(error)
@@ -367,7 +388,7 @@ const getUserCart = async (req, res) => {
       if (!wallet)res.json("Create wallet order failed");
       const user = await UserModel.findById(_id);
       let userCart = await CartModel.findOne({ orderby: user._id });
-      let finalAmout = 0;
+      let finalAmount = 0;
         finalAmount = userCart.cartTotal;
   
       let newOrder = await new OrderModel({
@@ -424,6 +445,7 @@ module.exports = {
   getWishlist,
   userCart,
   getUserCart,
+  removeProductFromCart,
   emptyCart,
   createOrder,
   getOrders

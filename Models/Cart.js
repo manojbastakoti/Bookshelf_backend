@@ -18,7 +18,7 @@ var cartSchema = new mongoose.Schema(
     price:{
       type:Number,
       required:true
-    }
+    },
   },
   {
     timestamps: true,
