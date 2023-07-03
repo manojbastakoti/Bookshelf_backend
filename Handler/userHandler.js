@@ -368,69 +368,83 @@ const getUserCart = async (req, res) => {
         }
       };
 
-  const emptyCart = async (req, res) => {
-    const { _id } = req.user;
+      const createOrder =async(req,res)=>{
+        const {_id} = req.user;
+        const {shippingInfo,orderItems,totalPrice,paymentInfo}=req.body;
+        try {
+          const order = await OrderModel.create({shippingInfo,orderItems,totalPrice,paymentInfo,user:_id})
+          res.json({
+            success:true,
+            message:"Order Received",
+            order
+          })
+        } catch (error) {
+          console.log(error)
+        }
+      }
+  // const emptyCart = async (req, res) => {
+  //   const { _id } = req.user;
     
-    try {
-      const user = await UserModel.findOne({ _id });
-      const cart = await CartModel.findOneAndRemove({ userId:_id, });
-      res.json(cart);
-    } catch (error) {
-      console.log(error)
-    }
-  };
+  //   try {
+  //     const user = await UserModel.findOne({ _id });
+  //     const cart = await CartModel.findOneAndRemove({ userId:_id, });
+  //     res.json(cart);
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // };
 
-  const createOrder = async (req, res) => {
-    const { wallet } = req.body;
-    const { _id } = req.user;
+  // const createOrder = async (req, res) => {
+  //   const { wallet } = req.body;
+  //   const { _id } = req.user;
 
-    try {
-      if (!wallet)res.json("Create wallet order failed");
-      const user = await UserModel.findById(_id);
-      let userCart = await CartModel.findOne({ orderby: user._id });
-      let finalAmount = 0;
-        finalAmount = userCart.cartTotal;
+  //   try {
+  //     if (!wallet)res.json("Create wallet order failed");
+  //     const user = await UserModel.findById(_id);
+  //     let userCart = await CartModel.findOne({ orderby: user._id });
+  //     let finalAmount = 0;
+  //       finalAmount = userCart.cartTotal;
   
-      let newOrder = await new OrderModel({
-        books: userCart.books,
-        paymentIntent: {
-          id: uniqid(),
-          method: "wallet",
-          amount: finalAmount,
-          status:"Payment with Wallet",
-          created: Date.now(),
-          currency: "Rupees",
-        },
-        orderby: user._id,
-        orderStatus: "Payment with Wallet",
-      }).save();
-      let update = userCart.books.map((item) => {
-        return {
-          updateOne: {
-            filter: { _id: item.book._id },
-            update: { $inc: { quantity: -item.count, sold: +item.count } },
-          },
-        };
-      });
-      const updated = await BookModel.bulkWrite(update, {});
-      res.json({ message: "success" });
-    } catch (error) {
-      console.log(error)
-    }
-  };
+  //     let newOrder = await new OrderModel({
+  //       books: userCart.books,
+  //       paymentIntent: {
+  //         id: uniqid(),
+  //         method: "wallet",
+  //         amount: finalAmount,
+  //         status:"Payment with Wallet",
+  //         created: Date.now(),
+  //         currency: "Rupees",
+  //       },
+  //       orderby: user._id,
+  //       orderStatus: "Payment with Wallet",
+  //     }).save();
+  //     let update = userCart.books.map((item) => {
+  //       return {
+  //         updateOne: {
+  //           filter: { _id: item.book._id },
+  //           update: { $inc: { quantity: -item.count, sold: +item.count } },
+  //         },
+  //       };
+  //     });
+  //     const updated = await BookModel.bulkWrite(update, {});
+  //     res.json({ message: "success" });
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // };
 
-  const getOrders =async (req, res) => {
-    const { _id } = req.user;
-    try {
-      const userorders = await OrderModel.findOne({ orderby: _id })
-        .populate("books.book")
-        .populate("orderby")
-        .exec();
-      res.json(userorders);
-    } catch (error) {
-      console.log(error)
-    }
-  };
+  // const getOrders =async (req, res) => {
+  //   const { _id } = req.user;
+  //   try {
+  //     const userorders = await OrderModel.findOne({ orderby: _id })
+  //       .populate("books.book")
+  //       .populate("orderby")
+  //       .exec();
+  //     res.json(userorders);
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // };
 
 module.exports = {
   getUsers,
@@ -446,7 +460,5 @@ module.exports = {
   userCart,
   getUserCart,
   removeProductFromCart,
-  emptyCart,
-  createOrder,
-  getOrders
+  createOrder
 };

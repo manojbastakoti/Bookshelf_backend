@@ -33,12 +33,10 @@ app.post('/cart',authenticateToken,userCart)
 app.get("/user-cart",authenticateToken,getUserCart);
 app.delete("/delete-user-cart/:id",authenticateToken,removeProductFromCart);
 
-app.delete("/empty-cart",authenticateToken,emptyCart)
-app.post("/cart/order",authenticateToken,createOrder)
-app.get("/get-orders",authenticateToken,getOrders)
 app.get("/wishlist",authenticateToken, getWishlist);
 app.delete("/deleteUser/:id",deleteUserById);
 
+app.post("/create-order", authenticateToken,createOrder)
 
 //Profile_info
 app.post("/profile_info",authenticateToken,getProfile);
