@@ -370,9 +370,9 @@ const getUserCart = async (req, res) => {
 
       const createOrder =async(req,res)=>{
         const {_id} = req.user;
-        const {shippingInfo,orderItems,totalPrice,paymentInfo}=req.body;
+        const {shippingInfo,orderItems,totalPrice}=req.body;
         try {
-          const order = await OrderModel.create({shippingInfo,orderItems,totalPrice,paymentInfo,user:_id})
+          const order = await OrderModel.create({shippingInfo,orderItems,totalPrice,user:_id})
           res.json({
             success:true,
             message:"Order Received",

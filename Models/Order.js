@@ -29,22 +29,23 @@ var orderSchema = new mongoose.Schema(
       type:String,
       required:true
     },
-    other:{
+    country:{
       type:String,
       required:true
-    }
+    },
+ 
    },
 
-   paymentInfo:{
-    khaltiOrderId:{
-      type:String,
-      required:true
-    },
-    khaltiPaymentId:{
-      type:String,
-      required:true
-    },
-   },
+  //  paymentInfo:{
+  //   khaltiOrderId:{
+  //     type:String,
+  //     required:true
+  //   },
+  //   khaltiPaymentId:{
+  //     type:String,
+  //     required:true
+  //   },
+  //  },
 
    orderItems:[
     {

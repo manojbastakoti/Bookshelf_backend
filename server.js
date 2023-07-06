@@ -12,6 +12,7 @@ const { addComment, getComments } = require("./Handler/commentHandler");
 const { getPopularBooks, getPopularBooksById } = require("./Handler/popularBooksHandler");
 const { getGenre, createGenre } = require("./Handler/genreHandler");
 const { createContact, updateContact, deleteContact, getContact, getallContact } = require("./Handler/ContactHandler");
+const khaltiPayment = require("./Handler/KhaltiHandler");
 
 
 app.use(cors({credentials:true ,origin:"http://localhost:5173"}))
@@ -19,6 +20,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 app.use(cookieParser())
 app.use(fileUpload())
+
 
 app.use("/uploads" ,express.static("uploads"));
 
@@ -83,6 +85,9 @@ app.put("/contact/:id", authenticateToken,isAdmin, updateContact)
 app.delete("/delete/:id", authenticateToken,isAdmin, deleteContact)
 app.get("/contact/:id",getContact);
 app.get("/contact",getallContact)
+
+//khalti
+app.post('/khalti',khaltiPayment)
 
 const port=8000;
 app.listen(port, function(){
