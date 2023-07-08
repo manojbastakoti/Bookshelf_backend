@@ -299,9 +299,12 @@ const deleteUserById = async (req, res) => {
 const getWishlist = async (req, res) => {
   const { _id } = req.user;
   try {
-    const findUser = await UserModel.findById(_id).populate("wishList");
+    const findUser = await UserModel.findById(_id).populate("wishList").populate("PopularwishList");
+    console.log(findUser)
     const wishlist = findUser.wishList.map((item) => item.toObject());
-    res.json(wishlist);
+    const Popularwishlist = findUser.PopularwishList.map((item) => item.toObject());
+
+    res.json({wishlist,Popularwishlist});
   } catch (error) {
     console.log(error);
   }

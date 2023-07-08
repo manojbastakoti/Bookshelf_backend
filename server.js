@@ -9,7 +9,7 @@ const { authenticateToken, isAdmin } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
 const { getBooks, addBook, getBookById, updateBook, deleteBookById, addToWishlist, rating } = require("./Handler/bookHandler");
 const { addComment, getComments } = require("./Handler/commentHandler");
-const { getPopularBooks, getPopularBooksById } = require("./Handler/popularBooksHandler");
+const { getPopularBooks, getPopularBooksById, addPopularBooksToWishlist } = require("./Handler/popularBooksHandler");
 const { getGenre, createGenre } = require("./Handler/genreHandler");
 const { createContact, updateContact, deleteContact, getContact, getallContact } = require("./Handler/ContactHandler");
 const khaltiPayment = require("./Handler/KhaltiHandler");
@@ -78,6 +78,7 @@ app.post("/genre/add",createGenre)
 //popularBooks
 app.get("/popularBooks",getPopularBooks)
 app.get("/popularBook/:id",getPopularBooksById)
+app.put("/popularBook/wishlist",authenticateToken,addPopularBooksToWishlist)
 
 //contact
 app.post("/contact/add", createContact)

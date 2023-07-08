@@ -31,10 +31,30 @@ const userSchema = new mongoose.Schema({
     default: [],
   },
   wishList: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "book",
+  
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "book",
+      
+      // {
+      //   type: [mongoose.Schema.Types.ObjectId],
+      //   ref: "PopularBook",
+      // }
+   
     default: [],
   },
+
+  PopularwishList: {
+  
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "PopularBook",
+  
+  // {
+  //   type: [mongoose.Schema.Types.ObjectId],
+  //   ref: "PopularBook",
+  // }
+
+default: [],
+},
 });
 
 userSchema.pre("save", async function (next) {
