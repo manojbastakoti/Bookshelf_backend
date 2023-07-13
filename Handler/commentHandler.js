@@ -50,7 +50,7 @@ const getComments = async (req, res) => {
         
     const comments = await CommentsModel.find({
         blog: blogId,
-      }).sort({ createdAt: -1 }).populate("user","name");
+      }).populate("user").sort({ createdAt: -1 });
       
         console.log(comments);
 

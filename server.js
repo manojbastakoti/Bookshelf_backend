@@ -7,7 +7,7 @@ const {getUsers,addUser,loginUser, changePassword,getProfile, googleLogin, getUs
 const {getBlogs,addBlog,editBlog, deleteBlog, getBlogById, addViews}=require("./Handler/blogHandler");
 const { authenticateToken, isAdmin } = require("./middleware/authenticate");
 const fileUpload = require("express-fileupload");
-const { getBooks, addBook, getBookById, updateBook, deleteBookById, addToWishlist, rating } = require("./Handler/bookHandler");
+const { getBooks, addBook, getBookById, updateBook, deleteBookById, addToWishlist, rating, searchByQueryType } = require("./Handler/bookHandler");
 const { addComment, getComments } = require("./Handler/commentHandler");
 const { getPopularBooks, getPopularBooksById, addPopularBooksToWishlist } = require("./Handler/popularBooksHandler");
 const { getGenre, createGenre } = require("./Handler/genreHandler");
@@ -68,6 +68,7 @@ app.put("/book/update/:id",updateBook);
 app.delete("/book/delete/:id",deleteBookById)
 app.put("/wishlist",authenticateToken,addToWishlist)
 app.put("/rate",authenticateToken,rating)
+app.post("/search",searchByQueryType)
 
 
 //genre

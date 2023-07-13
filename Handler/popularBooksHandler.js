@@ -3,9 +3,15 @@ const UserModel = require("../Models/User");
 
 const getPopularBooks =async(req,res)=>{
     try {
-        
+      const keyword= req.query.keyword?{
+        Title:{
+          $regex: req.query.keyword,
+          $options:"i",
+        },
+      }
+      :{}
         // const id = req.params.id;
-        const popularBooks= await PopularBookModel.find()
+        const popularBooks= await PopularBookModel.find({...keyword})
         console.log(popularBooks);
         res.json({
             popularBooks,

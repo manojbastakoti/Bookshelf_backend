@@ -4,7 +4,15 @@ const { imageValidation, uploadImage } = require("../utils");
 
 const getBooks = async (req, res) => {
   try {
-    const books = await BookModel.find();
+    const keyword= req.query.keyword?{
+      title:{
+        $regex: req.query.keyword,
+        $options:"i",
+      },
+    }
+    :{}
+
+    const books = await BookModel.find({...keyword});
     console.log(books);
     if (!books) {
       res.json({
@@ -222,6 +230,32 @@ const rating = async (req, res) => {
   }
 };
 
+const searchByQueryType = async (req, res) => {
+	const { type, query } = req.body;
+
+	try {
+		let books;
+
+		switch (type) {
+			case 'text':
+				books = await BookModel.find({ $text: { $search: query } });
+				break;
+			// case 'category':
+			// 	products = await Product.find({ productCategory: query });
+			// 	break;
+		}
+
+		if (!books.length > 0) {
+			books = await BookModel.find({});
+		}
+
+		res.json({ books });
+	} catch (error) {
+		console.log(error)
+		
+	}
+};
+
 module.exports = {
   getBooks,
   addBook,
@@ -229,5 +263,6 @@ module.exports = {
   updateBook,
   deleteBookById,
   addToWishlist,
-  rating
+  rating,
+  searchByQueryType
 };
