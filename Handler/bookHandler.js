@@ -4,15 +4,16 @@ const { imageValidation, uploadImage } = require("../utils");
 
 const getBooks = async (req, res) => {
   try {
-    const keyword= req.query.keyword?{
-      title:{
-        $regex: req.query.keyword,
-        $options:"i",
-      },
-    }
-    :{}
+    const keyword = req.query.keyword
+      ? {
+          title: {
+            $regex: req.query.keyword,
+            $options: "i",
+          },
+        }
+      : {};
 
-    const books = await BookModel.find({...keyword});
+    const books = await BookModel.find({ ...keyword });
     console.log(books);
     if (!books) {
       res.json({
@@ -51,8 +52,8 @@ const addBook = async (req, res) => {
       author: body.author,
       publishedDate: body.publishedDate,
       genre: body.genre,
-      ISBN:body.ISBN,
-      quantity:body.quantity,
+      ISBN: body.ISBN,
+      quantity: body.quantity,
     });
 
     await book.save();
@@ -183,12 +184,12 @@ const rating = async (req, res) => {
         {
           new: true,
         }
-        );
-        // res.json({
-        //   success: true,
-        //   message: "You have updated the rating for this book",
-        //   updateRating,
-        // });
+      );
+      // res.json({
+      //   success: true,
+      //   message: "You have updated the rating for this book",
+      //   updateRating,
+      // });
     } else {
       const rateBook = await BookModel.findByIdAndUpdate(
         bookId,
@@ -231,29 +232,28 @@ const rating = async (req, res) => {
 };
 
 const searchByQueryType = async (req, res) => {
-	const { type, query } = req.body;
+  const { type, query } = req.body;
 
-	try {
-		let books;
+  try {
+    let books;
 
-		switch (type) {
-			case 'text':
-				books = await BookModel.find({ $text: { $search: query } });
-				break;
-			// case 'category':
-			// 	products = await Product.find({ productCategory: query });
-			// 	break;
-		}
+    switch (type) {
+      case "text":
+        books = await BookModel.find({ $text: { $search: query } });
+        break;
+      // case 'category':
+      // 	products = await Product.find({ productCategory: query });
+      // 	break;
+    }
 
-		if (!books.length > 0) {
-			books = await BookModel.find({});
-		}
+    if (!books.length > 0) {
+      books = await BookModel.find({});
+    }
 
-		res.json({ books });
-	} catch (error) {
-		console.log(error)
-		
-	}
+    res.json({ books });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = {
@@ -264,5 +264,5 @@ module.exports = {
   deleteBookById,
   addToWishlist,
   rating,
-  searchByQueryType
+  searchByQueryType,
 };

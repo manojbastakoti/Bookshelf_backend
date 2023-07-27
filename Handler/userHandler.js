@@ -1,6 +1,6 @@
 const { createToken, verifyToken, generateRefreshToken } = require("../utils");
 
-const uniqid = require('uniqid');
+const uniqid = require("uniqid");
 
 const UserModel = require("../Models/User");
 const CartModel = require("../Models/Cart");
@@ -84,7 +84,7 @@ const loginUser = async (req, res) => {
       user_id: user._id,
       name: user.name,
       email: user.email,
-      role:user.role
+      role: user.role,
     },
   });
 
@@ -103,7 +103,7 @@ const loginUser = async (req, res) => {
       user_id: user._id,
       name: user.name,
       email: user.email,
-      role:user.role,
+      role: user.role,
     },
   });
 };
@@ -148,7 +148,7 @@ const adminLogin = async (req, res) => {
       user_id: user._id,
       name: user.name,
       email: user.email,
-      role:user.role
+      role: user.role,
     },
   });
 
@@ -197,7 +197,7 @@ const googleLogin = async (req, res) => {
         user_id: user._id,
         name: user.name,
         email: user.email,
-        role:user.role,
+        role: user.role,
       },
     });
     user.token = token;
@@ -212,7 +212,7 @@ const googleLogin = async (req, res) => {
         user_id: user._id,
         name: user.name,
         email: user.email,
-        role:user.role,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -299,32 +299,56 @@ const deleteUserById = async (req, res) => {
 const getWishlist = async (req, res) => {
   const { _id } = req.user;
   try {
-    const findUser = await UserModel.findById(_id).populate("wishList").populate("PopularwishList");
-    console.log(findUser)
+    const findUser = await UserModel.findById(_id)
+      .populate("wishList")
+      .populate("PopularwishList");
+    console.log(findUser);
     const wishlist = findUser.wishList.map((item) => item.toObject());
-    const Popularwishlist = findUser.PopularwishList.map((item) => item.toObject());
+    const Popularwishlist = findUser.PopularwishList.map((item) =>
+      item.toObject()
+    );
 
-    res.json({wishlist,Popularwishlist});
+    res.json({ wishlist, Popularwishlist });
   } catch (error) {
     console.log(error);
   }
 };
 
 const userCart = async (req, res) => {
-  const {bookId,quantity,price } = req.body;
+  const { bookId, quantity, price } = req.body;
   const { _id } = req.user;
   try {
-    
     let newCart = await new CartModel({
-      userId:_id,
+      userId: _id,
       bookId,
       price,
-      quantity
+      quantity,
     }).save();
     res.json({
-      success:true,
-      message:"Book is added to the Cart",
-      newCart
+      success: true,
+      message: "Book is added to the Cart",
+      newCart,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//popularBooks into cart
+const popularUserCart = async (req, res) => {
+  const { popularBookId, quantity, price } = req.body;
+  const { _id } = req.user;
+  try {
+    let newCart1 = await new CartModel({
+      userId: _id,
+      popularBookId,
+      price,
+      quantity,
+    }).save();
+    res.json({
+      success: true,
+      message: "PopularBook is added to the Cart",
+      newCart1,
     });
   } catch (error) {
     console.log(error);
@@ -332,122 +356,132 @@ const userCart = async (req, res) => {
 };
 
 const getUserCart = async (req, res) => {
-    const { _id } = req.user;
-    try {
-      const cart = await CartModel.find({ userId: _id }).populate(
-        "bookId"
-      );
-      if(!cart){
-        res.json({
-            success:false,
-            message:"Your Cart is empty",
-        });
-        return false;
-      }
-      res.json(cart);
-    } catch (error) {
-      console.log(error)
+  const { _id } = req.user;
+  try {
+    const cart = await CartModel.find({ userId: _id })
+      .populate("popularBookId")
+      .populate("bookId");
+    if (!cart) {
+      res.json({
+        success: false,
+        message: "Your Cart is Empty!",
+      });
+      return false;
     }
-  };
+    // const cartList = cart.popularBookId.map((item) => item.toObject());
+    // const popularCartList = cart.bookId.map((item) => item.toObject());
+    res.json(cart);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-  const removeProductFromCart = async (req, res) => {
-    const { _id } = req.user;
-    const id =req.params.id;
-    console.log(id)
-    // console.log(cartItemId)
-    try {
-      if (!id) {
-        res.json({
-          success:false,
-          message:"Invalid Cart Item Id",
-        })
-        return false;
-      }
-      const deleteproductfromcart = await CartModel.findOneAndRemove({ userId: _id, _id:id})
-      console.log(deleteproductfromcart)
-          res.json(deleteproductfromcart);
-        } catch (error) {
-          console.log(error)
-        }
-      };
+const removeProductFromCart = async (req, res) => {
+  const { _id } = req.user;
+  const id = req.params.id;
+  console.log(id);
+  // console.log(cartItemId)
+  try {
+    if (!id) {
+      res.json({
+        success: false,
+        message: "Invalid Cart Item Id",
+      });
+      return false;
+    }
+    const deleteproductfromcart = await CartModel.findOneAndRemove({
+      userId: _id,
+      _id: id,
+    });
+    console.log(deleteproductfromcart);
+    res.json(deleteproductfromcart);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-      const createOrder =async(req,res)=>{
-        const {_id} = req.user;
-        const {shippingInfo,orderItems,totalPrice}=req.body;
-        try {
-          const order = await OrderModel.create({shippingInfo,orderItems,totalPrice,user:_id})
-          res.json({
-            success:true,
-            message:"Order Received",
-            order
-          })
-        } catch (error) {
-          console.log(error)
-        }
-      }
-  // const emptyCart = async (req, res) => {
-  //   const { _id } = req.user;
-    
-  //   try {
-  //     const user = await UserModel.findOne({ _id });
-  //     const cart = await CartModel.findOneAndRemove({ userId:_id, });
-  //     res.json(cart);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // };
+const createOrder = async (req, res) => {
+  const { _id } = req.user;
+  const { shippingInfo, orderItems, totalPrice } = req.body;
+  try {
+    const order = await OrderModel.create({
+      shippingInfo,
+      orderItems,
+      totalPrice,
+      user: _id,
+    });
+    res.json({
+      success: true,
+      message: "Order Received",
+      order,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+// const emptyCart = async (req, res) => {
+//   const { _id } = req.user;
 
-  // const createOrder = async (req, res) => {
-  //   const { wallet } = req.body;
-  //   const { _id } = req.user;
+//   try {
+//     const user = await UserModel.findOne({ _id });
+//     const cart = await CartModel.findOneAndRemove({ userId:_id, });
+//     res.json(cart);
+//   } catch (error) {
+//     console.log(error)
+//   }
+// };
 
-  //   try {
-  //     if (!wallet)res.json("Create wallet order failed");
-  //     const user = await UserModel.findById(_id);
-  //     let userCart = await CartModel.findOne({ orderby: user._id });
-  //     let finalAmount = 0;
-  //       finalAmount = userCart.cartTotal;
-  
-  //     let newOrder = await new OrderModel({
-  //       books: userCart.books,
-  //       paymentIntent: {
-  //         id: uniqid(),
-  //         method: "wallet",
-  //         amount: finalAmount,
-  //         status:"Payment with Wallet",
-  //         created: Date.now(),
-  //         currency: "Rupees",
-  //       },
-  //       orderby: user._id,
-  //       orderStatus: "Payment with Wallet",
-  //     }).save();
-  //     let update = userCart.books.map((item) => {
-  //       return {
-  //         updateOne: {
-  //           filter: { _id: item.book._id },
-  //           update: { $inc: { quantity: -item.count, sold: +item.count } },
-  //         },
-  //       };
-  //     });
-  //     const updated = await BookModel.bulkWrite(update, {});
-  //     res.json({ message: "success" });
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // };
+// const createOrder = async (req, res) => {
+//   const { wallet } = req.body;
+//   const { _id } = req.user;
 
-  // const getOrders =async (req, res) => {
-  //   const { _id } = req.user;
-  //   try {
-  //     const userorders = await OrderModel.findOne({ orderby: _id })
-  //       .populate("books.book")
-  //       .populate("orderby")
-  //       .exec();
-  //     res.json(userorders);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // };
+//   try {
+//     if (!wallet)res.json("Create wallet order failed");
+//     const user = await UserModel.findById(_id);
+//     let userCart = await CartModel.findOne({ orderby: user._id });
+//     let finalAmount = 0;
+//       finalAmount = userCart.cartTotal;
+
+//     let newOrder = await new OrderModel({
+//       books: userCart.books,
+//       paymentIntent: {
+//         id: uniqid(),
+//         method: "wallet",
+//         amount: finalAmount,
+//         status:"Payment with Wallet",
+//         created: Date.now(),
+//         currency: "Rupees",
+//       },
+//       orderby: user._id,
+//       orderStatus: "Payment with Wallet",
+//     }).save();
+//     let update = userCart.books.map((item) => {
+//       return {
+//         updateOne: {
+//           filter: { _id: item.book._id },
+//           update: { $inc: { quantity: -item.count, sold: +item.count } },
+//         },
+//       };
+//     });
+//     const updated = await BookModel.bulkWrite(update, {});
+//     res.json({ message: "success" });
+//   } catch (error) {
+//     console.log(error)
+//   }
+// };
+
+// const getOrders =async (req, res) => {
+//   const { _id } = req.user;
+//   try {
+//     const userorders = await OrderModel.findOne({ orderby: _id })
+//       .populate("books.book")
+//       .populate("orderby")
+//       .exec();
+//     res.json(userorders);
+//   } catch (error) {
+//     console.log(error)
+//   }
+// };
 
 module.exports = {
   getUsers,
@@ -461,7 +495,8 @@ module.exports = {
   adminLogin,
   getWishlist,
   userCart,
+  popularUserCart,
   getUserCart,
   removeProductFromCart,
-  createOrder
+  createOrder,
 };
