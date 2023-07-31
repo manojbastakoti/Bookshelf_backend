@@ -21,6 +21,7 @@ const {
   getOrders,
   removeProductFromCart,
   popularUserCart,
+  getALLOrders,
 } = require("./Handler/userHandler");
 const {
   getBlogs,
@@ -76,6 +77,8 @@ app.post("/user/google-login", googleLogin);
 app.get("/get-user/:id", authenticateToken, isAdmin, getUserById);
 app.post("/cart", authenticateToken, userCart);
 app.post("/popularCart", authenticateToken, popularUserCart);
+
+app.get("/getOrder", authenticateToken, isAdmin, getALLOrders);
 
 app.get("/user-cart", authenticateToken, getUserCart);
 

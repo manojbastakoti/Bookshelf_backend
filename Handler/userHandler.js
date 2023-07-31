@@ -404,6 +404,22 @@ const createOrder = async (req, res) => {
   const { _id } = req.user;
   const { shippingInfo, orderItems, totalPrice } = req.body;
   try {
+    // Check book availability and update quantity
+    const updatePromises = orderItems.map(async (item) => {
+      console.log(item);
+      const book = await BookModel.findById(item.book);
+      if (!book || book.quantity < item.quantity) {
+        res.json({
+          message: "Insufficient stock for book",
+        });
+      }
+
+      book.quantity -= item.quantity;
+      await book.save();
+    });
+
+    await Promise.all(updatePromises);
+
     const order = await OrderModel.create({
       shippingInfo,
       orderItems,
@@ -413,7 +429,17 @@ const createOrder = async (req, res) => {
     res.json({
       success: true,
       message: "Order Received",
-      order,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getALLOrders = async (req, res) => {
+  try {
+    const order = await OrderModel.find();
+    res.json({
+      order: order,
     });
   } catch (error) {
     console.log(error);
@@ -499,4 +525,5 @@ module.exports = {
   getUserCart,
   removeProductFromCart,
   createOrder,
+  getALLOrders,
 };
