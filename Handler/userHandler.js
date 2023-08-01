@@ -6,6 +6,7 @@ const UserModel = require("../Models/User");
 const CartModel = require("../Models/Cart");
 const BookModel = require("../Models/Book");
 const OrderModel = require("../Models/Order");
+const PopularBookModel = require("../Models/Popular_Recommendation");
 const getUsers = async (req, res) => {
   try {
     const users = await UserModel.find();
@@ -399,7 +400,6 @@ const removeProductFromCart = async (req, res) => {
     console.log(error);
   }
 };
-
 const createOrder = async (req, res) => {
   const { _id } = req.user;
   const { shippingInfo, orderItems, totalPrice } = req.body;
@@ -408,14 +408,30 @@ const createOrder = async (req, res) => {
     const updatePromises = orderItems.map(async (item) => {
       console.log(item);
       const book = await BookModel.findById(item.book);
-      if (!book || book.quantity < item.quantity) {
+      const PopularBook = await PopularBookModel.findById(item.book);
+
+      if (
+        (!book || book.quantity < item.quantity) &&
+        (!PopularBook || PopularBook.quantity < item.quantity)
+      ) {
         res.json({
           message: "Insufficient stock for book",
         });
+        return;
       }
 
-      book.quantity -= item.quantity;
-      await book.save();
+      if (PopularBook) {
+        // Handle popular book inventory management here
+        // For example, decrement popular book quantity or update popularity counter
+        // You can also use a separate handler function to manage popular books' inventory
+        // For this example, let's decrement popular book quantity by item.quantity
+        PopularBook.quantity -= item.quantity;
+        await PopularBook.save();
+      } else if (book) {
+        // Regular book inventory management
+        book.quantity -= item.quantity;
+        await book.save();
+      }
     });
 
     await Promise.all(updatePromises);
@@ -445,6 +461,7 @@ const getALLOrders = async (req, res) => {
     console.log(error);
   }
 };
+
 // const emptyCart = async (req, res) => {
 //   const { _id } = req.user;
 
