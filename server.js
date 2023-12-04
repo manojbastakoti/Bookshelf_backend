@@ -61,9 +61,7 @@ const {
 const khaltiPayment = require("./Handler/KhaltiHandler");
 const { getRecommendedBooks } = require("./Handler/recommendedBooksHandler");
 
-app.use(
-  cors({ credentials: true, origin: "https://bookshelf-frontend.vercel.app" })
-);
+app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
